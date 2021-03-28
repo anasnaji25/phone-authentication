@@ -1,0 +1,70 @@
+//inside the class declare this 
+//these are the variables using for 
+
+FirebaseAuth _auth = FirebaseAuth.instance;
+  String verificationId;
+  String errorMessage = '';
+  String smsOTP;
+  String phone;
+  String number;
+  
+  
+  
+ 
+ 
+ //you need to call this function in the onTap method of the first screen button
+ 
+ //it will be like
+ onTap: (){
+ //this number variable will be the number we entering in textField
+    phone = '+91' + number;
+    signUpUserTest(phone,context);
+ }
+  
+  
+  
+  
+  //this is the function we need to call
+   Future<void> signUpUserTest(String phone, BuildContext context) async {
+
+    //this function is sending otp to the phone number that provided
+    final PhoneCodeSent smsOTPSent =
+        (String verificationId, [int forceCodeResend]) {
+      this.verificationId = verificationId;
+    };
+
+
+    _auth.verifyPhoneNumber(
+        phoneNumber: phone,
+        timeout: Duration(seconds: 120),
+        verificationCompleted: (AuthCredential credential) async {
+          print("shagun if your seeing this on terminal its working...  ");
+        },
+        verificationFailed: (AuthException exception) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      "Sign Up Failed!\nPlease Enter correct mobile number!"),
+                  actions: [
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            _phoneNumber.text = "";
+                          });
+                        },
+                        child: Text("OK"))
+                  ],
+                );
+              });
+        },
+        codeSent: smsOTPSent,
+        codeAutoRetrievalTimeout: (String verificaitonID) {
+          this.verificationId = verificaitonID;
+        });
+  }
+  
+  
+
